@@ -29,7 +29,7 @@ const Encabezado = () => {
         <Navbar.Toggle
           aria-controls="menu-offcanvas"
           onClick={manejarToggle}
-          className="bg-light"
+          className="bg-primary"
         />
 
         <Navbar.Offcanvas
@@ -44,16 +44,66 @@ const Encabezado = () => {
 
           <Offcanvas.Body>
             <Nav className="flex-grow-1 pe-3">
-              <Nav.Link onClick={() => manejarNavegacion("/")}>
-                Inicio
+              <Nav.Link 
+                className={mostrarMenu ? "texto-marca": "text-white"}
+                onClick={() => manejarNavegacion("/")}
+              >
+                {mostrarMenu ? <i className="bi-house-fill me-2"></i> : null} Inicio
               </Nav.Link>
-              <Nav.Link onClick={() => manejarNavegacion("/categorias")}>
-                Categorías
+
+              <Nav.Link 
+                className={mostrarMenu ? "texto-marca": "text-white"}
+                onClick={() => manejarNavegacion("/categorias")}
+              >
+                {mostrarMenu ? <i className="bi-bookmark-plus me-2"></i> : null}Categorías 
               </Nav.Link>
-              <Nav.Link onClick={() => manejarNavegacion("/productos")}>
-                Productos
+
+              <Nav.Link 
+                className={mostrarMenu ? "texto-marca": "text-white"}
+                onClick={() => manejarNavegacion("/productos")}
+              >
+                {mostrarMenu ? <i className="bi-box-fill me-2"></i> : null}Productos 
               </Nav.Link>
-              <Nav.Link onClick={() => manejarNavegacion("/catalogo")}>
+
+              <Nav.Link 
+                className={mostrarMenu ? "texto-marca": "text-white"}
+                onClick={() => manejarNavegacion("/clientes")}
+              >
+                {mostrarMenu ? <i className="bi-person-circle me-2"></i> : null} Clientes 
+              </Nav.Link>
+
+              <Nav.Link 
+                className={mostrarMenu ? "texto-marca": "text-white"}
+                onClick={() => manejarNavegacion("/empleados")}
+              >
+               {mostrarMenu ? <i className="bi-person-arms-up me-2"></i> : null} Empleados 
+              </Nav.Link>
+
+              <Nav.Link 
+                className={mostrarMenu ? "texto-marca": "text-white"}
+                onClick={() => manejarNavegacion("/usuarios")}
+              >
+                Usuarios 
+              </Nav.Link>
+
+              <Nav.Link 
+                className={mostrarMenu ? "texto-marca": "text-white"}
+                onClick={() => manejarNavegacion("/ventas")}
+              >
+                Ventas 
+              </Nav.Link>
+
+              <Nav.Link 
+                className={mostrarMenu ? "texto-marca": "text-white"}
+                onClick={() => manejarNavegacion("/compras")}
+              >
+                Compras 
+              </Nav.Link>
+
+              <Nav.Link 
+                className={mostrarMenu ? "texto-marca": "text-white"}
+                onClick={() => manejarNavegacion("/catalogo")}
+              >
                 Catálogo
               </Nav.Link>
             </Nav>
