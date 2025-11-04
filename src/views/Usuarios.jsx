@@ -60,6 +60,7 @@ const Usuarios = () => {
       const datos = await respuesta.json();
 
       setUsuarios(datos);
+      setUsuariosFiltrados(datos);
       setCargando(false);
 
 
