@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import TablaCategorias from "../components/categorias/TablaCategorias";
-import CuadroBusquedas from "../components/busquedas/cuadroBusquedas";
+import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import ModalRegistroCategoria from "../components/categorias/ModalRegistroCategoria";
 import ModalEdicionCategoria from "../components/categorias/ModalEdicionCategoria";
 import ModalEliminacionCategoria from "../components/categorias/ModalEliminacionCategoria";
@@ -18,11 +18,20 @@ const Categorias = () => {
   const [categoriaEditada, setCategoriaEditada] = useState(null);
   const [categoriaAEliminar, setCategoriaAEliminar] = useState(null);
 
+  const [paginaActual, establecerPaginaActual] = useState(1);
+  const elementosPorPagina = 5; // Número de productos por página
+
   const [mostrarModal, setMostrarModal] = useState(false);
   const [nuevaCategoria, setNuevaCategoria] = useState({
     nombre_categoria: "",
     descripcion_categoria: "",
   });
+
+  // Calcular categorias paginadas
+  const categoriasPaginadas = categoriasFiltradas.slice(
+  (paginaActual - 1) * elementosPorPagina,
+  paginaActual * elementosPorPagina
+  );
 
   // 🔹 Manejar input del registro
   const manejarCambioInput = (e) => {
@@ -167,10 +176,14 @@ const Categorias = () => {
       </Row>
 
       <TablaCategorias
-        categorias={categoriasFiltradas}
+        categorias={categoriasPaginadas}
         cargando={cargando}
         abrirModalEdicion={abrirModalEdicion}
         abrirModalEliminacion={abrirModalEliminacion}
+        totalElementos={categorias.length} // Total de categorias
+        elementosPorPagina={elementosPorPagina} // Elementos por página
+        paginaActual={paginaActual} // Página actual
+        establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
       />
 
       {/* Modal de registro */}

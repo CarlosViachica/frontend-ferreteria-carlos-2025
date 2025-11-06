@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import TablaUsuarios from "../components/usuarios/TablaUsuarios";
-import CuadroBusquedas from "../components/busquedas/cuadroBusquedas";
+import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import ModalRegistroUsuario from "../components/usuarios/ModalRegistroUsuario";
 
 

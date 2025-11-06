@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import TablaClientes from "../components/clientes/TablaClientes";
-import CuadroBusquedas from "../components/busquedas/cuadroBusquedas";
+import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import ModalRegistroCliente from "../components/clientes/ModalRegistroCliente";
 
 
@@ -68,6 +68,7 @@ const Clientes = () => {
       const datos = await respuesta.json();
 
       setClientes(datos);
+      setClientesFiltrados(datos);
       setCargando(false);
 
 
