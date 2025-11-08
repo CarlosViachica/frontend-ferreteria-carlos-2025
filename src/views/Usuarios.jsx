@@ -3,6 +3,9 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import TablaUsuarios from "../components/usuarios/TablaUsuarios";
 import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import ModalRegistroUsuario from "../components/usuarios/ModalRegistroUsuario";
+import ModalEdicionUsuario from "../components/usuarios/ModalEdicionUsuario";
+import ModalEliminacionUsuario from "../components/usuarios/ModalEliminacionUsuario";
+
 
 
 const Usuarios = () => {
@@ -12,6 +15,15 @@ const Usuarios = () => {
 
   const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
+
+  const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+
+  const [paginaActual, establecerPaginaActual] = useState(1);
+  const elementosPorPagina = 5; // Número de productos por página
+
+  const [usuarioEditado, setUsuarioEditado] = useState(null);
+  const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [nuevoUsuario, setNuevoUsuario] = useState({
@@ -85,6 +97,60 @@ const Usuarios = () => {
   };
 
 
+  // Calcular productos paginadas
+  const usuariosPaginados = usuariosFiltrados.slice(
+  (paginaActual - 1) * elementosPorPagina,
+  paginaActual * elementosPorPagina
+  );
+
+  const abrirModalEdicion = (usuario) => {
+    setUsuarioEditado({ ...usuario });
+    setMostrarModalEdicion(true);
+  };
+
+  const guardarEdicion = async () => {
+    if (!usuarioEditado.usuario.trim()) return;
+    try {
+      const respuesta = await fetch(
+        `http://localhost:3002/api/actualizarUsuarioPatch/${usuarioEditado.id_usuario}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(usuarioEditado),
+        }
+      );
+      if (!respuesta.ok) throw new Error("Error al actualizar producto");
+      setMostrarModalEdicion(false);
+      await obtenerUsuarios();
+    } catch (error) {
+      console.error("Error al editar usuario:", error);
+      alert("No se pudo actualizar el usuario.");
+    }
+  };
+
+  const abrirModalEliminacion = (usuario) => {
+    setUsuarioAEliminar(usuario);
+    setMostrarModalEliminar(true);
+  };
+
+  const confirmarEliminacion = async () => {
+    try {
+      const respuesta = await fetch(
+        `http://localhost:3002/api/eliminarusuario/${usuarioAEliminar.id_usuario}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!respuesta.ok) throw new Error("Error al eliminar usuario");
+      setMostrarModalEliminar(false);
+      setUsuarioAEliminar(null);
+      await obtenerUsuarios();
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      alert("No se pudo eliminar el usuario.");
+    }
+  };
+
   useEffect(() => {
     obtenerUsuarios();
   } , []);
@@ -113,8 +179,14 @@ return (
         </Row>
 
         <TablaUsuarios
-          usuarios={usuariosFiltrados} 
+          usuarios={usuariosPaginados} 
           cargando={cargando}
+          abrirModalEdicion={abrirModalEdicion}
+          abrirModalEliminacion={abrirModalEliminacion}
+          totalElementos={usuarios.length} // Total de categorias
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
         />
 
         <ModalRegistroUsuario
@@ -123,6 +195,21 @@ return (
           nuevoUsuario={nuevoUsuario}
           manejarCambioInput={manejarCambioInput}
           agregarUsuario={agregarUsuario}
+        />
+
+        <ModalEdicionUsuario
+          mostrar={mostrarModalEdicion}
+          setMostrar={setMostrarModalEdicion}
+          usuarioEditado={usuarioEditado}
+          setUsuarioEditado={setUsuarioEditado}
+          guardarEdicion={guardarEdicion}
+        />
+
+        <ModalEliminacionUsuario
+          mostrar={mostrarModalEliminar}
+          setMostrar={setMostrarModalEliminar}
+          usuario={usuarioAEliminar}
+          confirmarEliminacion={confirmarEliminacion}
         />
       </Container>
     </>
