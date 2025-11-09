@@ -3,6 +3,8 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import TablaClientes from "../components/clientes/TablaClientes";
 import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import ModalRegistroCliente from "../components/clientes/ModalRegistroCliente";
+import ModalEdicionClienre from "../components/clientes/ModalEdicionCliente";
+import ModalEliminacionCliente from "../components/clientes/ModalEliminacionCliente";
 
 
 const Clientes = () => {
@@ -12,6 +14,14 @@ const Clientes = () => {
 
   const [clientesFiltrados, setClientesFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
+
+  const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+  const [clienteEditado, setClienteEditado] = useState(null);
+  const [clienteAEliminar, setClienteAEliminar] = useState(null);
+
+  const [paginaActual, establecerPaginaActual] = useState(1);
+  const elementosPorPagina = 5; // Número de productos por página
 
 
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -25,10 +35,18 @@ const Clientes = () => {
     cedula: ''
   });
 
+
+  // Calcular clientes paginados
+  const clientesPaginados = clientesFiltrados.slice(
+  (paginaActual - 1) * elementosPorPagina,
+  paginaActual * elementosPorPagina
+  );
+
   const manejarCambioInput = (e) => {
     const { name, value } = e.target;
     setNuevoCliente((prev) => ({ ...prev, [name]: value }));
   };
+
 
 
   const agregarCliente = async () => {
@@ -97,6 +115,65 @@ const Clientes = () => {
     setClientesFiltrados(filtrados); // Actualiza el estado con las categorías filtradas
   };
 
+
+  // 🔹 Guardar edición
+  const guardarEdicion = async () => {
+    if (!clienteEditado?.primer_nombre.trim()) return;
+
+    try {
+      const respuesta = await fetch(
+        `http://localhost:3002/api/actualizarClientePatch/${clienteEditado.id_cliente}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(clienteEditado),
+        }
+      );
+
+      if (!respuesta.ok) throw new Error("Error al actualizar");
+
+      setMostrarModalEdicion(false);
+      await obtenerClientes();
+    } catch (error) {
+      console.error("Error al editar categoría:", error);
+      alert("No se pudo actualizar el cliente.");
+    }
+  };
+
+
+  // 🔹 Abrir modal de eliminación
+  const abrirModalEliminacion = (cliente) => {
+    setCategoriaAEliminar(cliente);
+    setMostrarModalEliminar(true);
+  };
+
+  // 🔹 Confirmar eliminación
+  const confirmarEliminacion = async () => {
+    try {
+      const respuesta = await fetch(
+        `http://localhost:3002/api/eliminarcliente/${categoriaAEliminar.id_categoria}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!respuesta.ok) throw new Error("Error al eliminar");
+
+      setMostrarModalEliminar(false);
+      setCategoriaAEliminar(null);
+      await obtenerClientes();
+    } catch (error) {
+      console.error("Error al eliminar el cliente:", error);
+      alert("No se pudo eliminar el cliente.");
+    }
+  };
+
+  // 🔹 Abrir modal de edición
+  const abrirModalEdicion = (cliente) => {
+    setCategoriaEditada({ ...cliente });
+    setMostrarModalEdicion(true);
+  };
+
   useEffect(() => {
     obtenerClientes();
   }, []);
@@ -126,6 +203,12 @@ const Clientes = () => {
         <TablaClientes
           clientes={clientesFiltrados}
           cargando={cargando}
+          abrirModalEdicion={abrirModalEdicion}
+          abrirModalEliminacion={abrirModalEliminacion}
+          totalElementos={clientes.length} // Total de categorias
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
         />
         <ModalRegistroCliente
           mostrarModal={mostrarModal}
@@ -133,6 +216,23 @@ const Clientes = () => {
           nuevoCliente={nuevoCliente}
           manejarCambioInput={manejarCambioInput}
           agregarCliente={agregarCliente}
+        />
+
+        {/* Modal de edición */}
+        <ModalEdicionCliente
+          mostrar={mostrarModalEdicion}
+          setMostrar={setMostrarModalEdicion}
+          clienteEditado={clienteEditado}
+          setClienteEditado={setClienteEditado}
+          guardarEdicion={guardarEdicion}
+        />
+
+        {/* Modal de eliminación */}
+        <ModalEliminacionCliente
+          mostrar={mostrarModalEliminar}
+          setMostrar={setMostrarModalEliminar}
+          cliente={clienteAEliminar}
+          confirmarEliminacion={confirmarEliminacion}
         />
       </Container>
     </>
