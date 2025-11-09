@@ -1,4 +1,4 @@
-import {Table, Spinner} from "react-bootstrap";
+import {Table, Spinner, Button} from "react-bootstrap";
 import BotonOrden from "../ordenamiento/BotonOrden";
 import { useState } from "react";
 import Paginacion

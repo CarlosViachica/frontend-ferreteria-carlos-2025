@@ -5,6 +5,7 @@ import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import ModalRegistroCliente from "../components/clientes/ModalRegistroCliente";
 import ModalEdicionClienre from "../components/clientes/ModalEdicionCliente";
 import ModalEliminacionCliente from "../components/clientes/ModalEliminacionCliente";
+import ModalEdicionCliente from "../components/clientes/ModalEdicionCliente";
 
 
 const Clientes = () => {
@@ -143,7 +144,7 @@ const Clientes = () => {
 
   // 🔹 Abrir modal de eliminación
   const abrirModalEliminacion = (cliente) => {
-    setCategoriaAEliminar(cliente);
+    setClienteAEliminar(cliente);
     setMostrarModalEliminar(true);
   };
 
@@ -151,7 +152,7 @@ const Clientes = () => {
   const confirmarEliminacion = async () => {
     try {
       const respuesta = await fetch(
-        `http://localhost:3002/api/eliminarcliente/${categoriaAEliminar.id_categoria}`,
+        `http://localhost:3002/api/eliminarcliente/${clienteAEliminar.id_cliente}`,
         {
           method: "DELETE",
         }
@@ -160,7 +161,7 @@ const Clientes = () => {
       if (!respuesta.ok) throw new Error("Error al eliminar");
 
       setMostrarModalEliminar(false);
-      setCategoriaAEliminar(null);
+      setClienteAEliminar(null);
       await obtenerClientes();
     } catch (error) {
       console.error("Error al eliminar el cliente:", error);
@@ -170,7 +171,7 @@ const Clientes = () => {
 
   // 🔹 Abrir modal de edición
   const abrirModalEdicion = (cliente) => {
-    setCategoriaEditada({ ...cliente });
+    setClienteEditado({ ...cliente });
     setMostrarModalEdicion(true);
   };
 
