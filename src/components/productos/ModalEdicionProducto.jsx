@@ -80,6 +80,7 @@ const ModalEdicionProducto = ({
                   step="0.01"
                 />
               </Form.Group>
+              
             </Col>
             <Col md={4} className="mb-3">
               <Form.Group controlId="stockProducto">
@@ -93,14 +94,33 @@ const ModalEdicionProducto = ({
               </Form.Group>
             </Col>
             <Col md={4} className="mb-3">
-              <Form.Group controlId="imagenProducto">
-                <Form.Label>Imagen (URL)</Form.Label>
+              <Form.Group className="mb-3" controlId="formImagenProducto">
+                <Form.Label>Imagen</Form.Label>
+                {productoEditado?.imagen && (
+                  <div>
+                    <img
+                      src={`data:image/png;base64,${productoEditado.imagen}`}
+                      alt="Imagen actual"
+                      style={{ maxWidth: '100px', marginBottom: '10px' }}
+                    />
+                  </div>
+                )}
                 <Form.Control
-                  type="text"
+                  type="file"
                   name="imagen"
-                  value={productoEditado?.imagen}
-                  onChange={manejarCambio}
-                  placeholder="URL de la imagen"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        manejarCambio({
+                          target: { name: 'imagen', value: reader.result.split(',')[1] }
+                        });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
                 />
               </Form.Group>
             </Col>
