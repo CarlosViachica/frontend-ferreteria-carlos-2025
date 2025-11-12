@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import TablaUsuarios from "../components/usuarios/TablaUsuarios";
 import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import ModalRegistroUsuario from "../components/usuarios/ModalRegistroUsuario";
@@ -60,6 +62,58 @@ const Usuarios = () => {
     }
   };
 
+  const generarPDFUsuarios = () => {
+    const doc = new jsPDF();
+
+    doc.setFillColor(28, 41, 51);
+    doc.rect(0, 0, 220, 30, 'F');
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(28);
+    doc.text("Lista de Usuarios", doc.internal.pageSize.getWidth() / 2, 18, { align: "center" });
+
+    const columnas = ["ID", "Usuario"];
+    const filas = usuariosFiltrados.map((u) => [
+      u.id_usuario,
+      u.usuario
+    ]);
+
+    const totalPaginas = "{total_pages_count_string}";
+
+    autoTable(doc, {
+      head: [columnas],
+      body: filas,
+      startY: 40,
+      theme: "grid",
+      styles: { fontSize: 10, cellPadding: 2 },
+      margin: { top: 20, left: 14, right: 14 },
+      tableWidth: 'auto',
+      pageBreak: 'auto',
+      rowPageBreak: 'auto',
+      didDrawPage: function (data) {
+        const alturaPagina = doc.internal.pageSize.getHeight();
+        const anchoPagina = doc.internal.pageSize.getWidth();
+
+        const numeroPagina = doc.internal.getNumberOfPages();
+
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
+        const piePagina = `Página ${numeroPagina} de ${totalPaginas}`;
+        doc.text(piePagina, anchoPagina / 2 + 15, alturaPagina - 10, { align: "center" });
+      },
+    });
+
+    if (typeof doc.putTotalPages === "function") {
+      doc.putTotalPages(totalPaginas);
+    }
+
+    const fecha = new Date();
+    const dia = String(fecha.getDate()).padStart(2, "0");
+    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    const anio = fecha.getFullYear();
+    const nombreArchivo = `usuarios_${dia}${mes}${anio}.pdf`;
+    doc.save(nombreArchivo);
+  }
 
   const obtenerUsuarios = async () => {
 
@@ -155,7 +209,9 @@ const Usuarios = () => {
     obtenerUsuarios();
   } , []);
 
-return (
+  
+
+  return (
     <>
       <Container className="mt-4">
         <h4>Usuarios</h4>
@@ -212,6 +268,16 @@ return (
           confirmarEliminacion={confirmarEliminacion}
         />
       </Container>
+      <Col lg={3} md={4} sm={4} xs={5} >
+        <Button
+          className="mb-3"
+          onClick={generarPDFUsuarios}
+          variant="secondary"
+          style={{ width: '100%' }}
+        >
+          Generar PDF
+        </Button>
+      </Col>
     </>
   );
 }
