@@ -187,6 +187,7 @@ const Usuarios = () => {
     setMostrarModalEliminar(true);
   };
 
+  
   const confirmarEliminacion = async () => {
     try {
       const respuesta = await fetch(

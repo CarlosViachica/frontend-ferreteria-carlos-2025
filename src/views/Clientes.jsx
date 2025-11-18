@@ -258,6 +258,16 @@ const Clientes = () => {
               + Nuevo Cliente
             </Button>
           </Col>
+        <Col lg={3} md={4} sm={4} xs={5} >
+        <Button
+          className="mb-3"
+          onClick={generarPDFClientes}
+          variant="secondary"
+          style={{ width: '100%' }}
+        >
+          Generar PDF
+        </Button>
+      </Col>
         </Row>
 
         <TablaClientes
@@ -295,16 +305,7 @@ const Clientes = () => {
           confirmarEliminacion={confirmarEliminacion}
         />
       </Container>
-      <Col lg={3} md={4} sm={4} xs={5} >
-        <Button
-          className="mb-3"
-          onClick={generarPDFClientes}
-          variant="secondary"
-          style={{ width: '100%' }}
-        >
-          Generar PDF
-        </Button>
-      </Col>
+      
     </>
   );
 }
